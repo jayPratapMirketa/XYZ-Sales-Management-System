@@ -1,33 +1,3 @@
-/*
-public class OpportunityManagementTriggerClass {
-    public static void OpportunityHandler(List<Opportunity> newOpportunities) {
-
-        Id AccountIdInfo = newOpportunities.get(0).AccountId;
-
-        Integer OpenStageCount = 0;
-        for(Opportunity opp : newOpportunities) {
-            if(opp.StageName != 'Closed Won' &&  opp.StageName != 'Closed Lost') {
-                OpenStageCount += 1;
-            }
-            if(OpenStageCount > 1) {
-                opp.addError('You are Inserting More Than 1 Open Opportunity');
-            }
-        }
-
-
-        List<Opportunity> oldOpportunities = [Select Id, StageName FROM Opportunity Where Opportunity.AccountId =:AccountIdInfo AND StageName != 'Closed Won' And StageName != 'Closed Lost']; 
-
-        if(oldOpportunities.size() >= 1) {
-            for(Opportunity opp : newOpportunities) {
-                if(opp.StageName != 'Closed Won' &&  opp.StageName != 'Closed Lost') {
-                    opp.addError('There can only be one open Opportunity for a Account');
-                }
-            }
-        }
-    }
-}
-*/
-
 public class OpportunityManagementTriggerClass {
 
     public static void OpportunityHandler(List<Opportunity> newOpportunities) {
@@ -38,9 +8,9 @@ public class OpportunityManagementTriggerClass {
         //Map to get Name of Account By using Id
         Map<Id,Account> accountNameMap =  new Map<Id,Account>([Select Id,Name from Account]);
 
-        /* Considering the fact that the user is trying to insert  multiple opportunities in multiple accounts at once and And the list of open staged opportunities are more than one*/                                                        
+        /* Considering the fact that the user is trying to insert  multiple opportunities in multiple accounts at once  And the list of open staged opportunities are more than one*/                                                        
         for(Opportunity opp : newOpportunities) {
-            if(opp.StageName != 'Closed Won' && opp.StageName != 'Closed Lost') {
+            if(opp.IsWon == false && opp.IsClosed == false) {
                 Id accountId = opp.AccountId;
                 if(accountOpportunityMap.containsKey(accountId)) {
                     //Founded that the user is trying to insert more than one open opportunity for the particular account.
@@ -56,11 +26,11 @@ public class OpportunityManagementTriggerClass {
         /* ---------------Considering the fact that there can be already existing open opportunities-----------------------*/
         for(Id accountId : accountOpportunityMap.keySet()) {
             //Getting all existing opportunity for each Account  
-            List<Opportunity> oldOpportunities = [SELECT Id, StageName FROM Opportunity WHERE AccountId = :accountId AND StageName != 'Closed Won' AND StageName != 'Closed Lost'];
+            List<Opportunity> oldOpportunities = [SELECT Id, IsWon, IsClosed FROM Opportunity WHERE AccountId = :accountId AND IsWon = false AND IsClosed = false];
             //If One open stage opportunity already exist in the Account
             if(oldOpportunities.size() >= 1) {
                 for(Opportunity opp : newOpportunities) {
-                    if(opp.AccountId == accountId && opp.StageName != 'Closed Won' && opp.StageName != 'Closed Lost') {
+                    if(opp.AccountId == accountId && opp.IsWon == false && opp.IsClosed == false) {
                         opp.addError('There can only be one open Opportunity for Account ' + accountNameMap.get(opp.AccountId).Name);
                     }
                 }
