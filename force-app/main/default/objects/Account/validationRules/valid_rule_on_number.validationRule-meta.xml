@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>valid_rule_on_number</fullName>
+    <active>true</active>
+    <errorConditionFormula>Test_Number__c  &gt; 1</errorConditionFormula>
+    <errorDisplayField>Test_Number__c</errorDisplayField>
+    <errorMessage>enter number less than 1</errorMessage>
+</ValidationRule>
