@@ -10,7 +10,7 @@ public class OpportunityManagementTriggerClass {
 
         /* Considering the fact that the user is trying to insert  multiple opportunities in multiple accounts at once  And the list of open staged opportunities are more than one*/                                                        
         for(Opportunity opp : newOpportunities) {
-            if(opp.IsWon == false && opp.IsClosed == false) {
+            if(opp.IsClosed == false) {
                 Id accountId = opp.AccountId;
                 if(accountOpportunityMap.containsKey(accountId)) {
                     //Founded that the user is trying to insert more than one open opportunity for the particular account.
@@ -24,15 +24,25 @@ public class OpportunityManagementTriggerClass {
 
     
         /* ---------------Considering the fact that there can be already existing open opportunities-----------------------*/
-        for(Id accountId : accountOpportunityMap.keySet()) {
-            //Getting all existing opportunity for each Account  
-            List<Opportunity> oldOpportunities = [SELECT Id, IsWon, IsClosed FROM Opportunity WHERE AccountId = :accountId AND IsWon = false AND IsClosed = false];
-            //If One open stage opportunity already exist in the Account
-            if(oldOpportunities.size() >= 1) {
-                for(Opportunity opp : newOpportunities) {
-                    if(opp.AccountId == accountId && opp.IsWon == false && opp.IsClosed == false) {
-                        opp.addError('There can only be one open Opportunity for Account ' + accountNameMap.get(opp.AccountId).Name);
-                    }
+
+        List<Opportunity> oldOpportunities = [SELECT Id, IsClosed,AccountId FROM Opportunity WHERE AccountId = :accountOpportunityMap.keySet() AND IsClosed = false];
+
+        Map<Id, List<Opportunity>> oldOpportunityMap = new Map<Id, List<Opportunity>>();
+
+        // Filling in the oldOpportunity Map
+        for (Opportunity opp : oldOpportunities) {
+            Id accId = opp.AccountId;
+            if (oldOpportunityMap.containsKey(accId)) {
+                oldOpportunityMap.get(accId).add(opp);
+            } else {
+                oldOpportunityMap.put(accId, new List<Opportunity>{opp});
+            }
+        }
+
+        if(oldOpportunities.size() >= 1) {
+            for(Opportunity opp : newOpportunities) {
+                if(oldOpportunityMap.containsKey(opp.AccountId) && opp.IsClosed == false && oldOpportunities.get(0).Id != opp.Id) {
+                    opp.addError('There can only be one open Opportunity for Account ' + accountNameMap.get(opp.AccountId).Name);
                 }
             }
         }
