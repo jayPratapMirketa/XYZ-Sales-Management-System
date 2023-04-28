@@ -53,6 +53,13 @@
                     <elementReference>TenDaysAfterDueDateCheck</elementReference>
                 </rightValue>
             </conditions>
+            <conditions>
+                <leftValueReference>$Record.status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>paid</stringValue>
+                </rightValue>
+            </conditions>
             <connector>
                 <targetReference>SendEmailAfterTenDaysfromDueDate</targetReference>
             </connector>
@@ -125,7 +132,7 @@
             </value>
         </filters>
         <object>Invoice__c</object>
-        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <recordTriggerType>Create</recordTriggerType>
         <scheduledPaths>
             <name>X10_days_after_invoice_due_date</name>
             <connector>

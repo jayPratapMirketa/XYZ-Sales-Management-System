@@ -106,7 +106,7 @@
             </value>
         </filters>
         <object>Invoice__c</object>
-        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <recordTriggerType>Create</recordTriggerType>
         <scheduledPaths>
             <name>X10_Day_Before_Invoice_Due_Date</name>
             <connector>
