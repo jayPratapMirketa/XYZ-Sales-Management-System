@@ -4,6 +4,11 @@
     <externalId>false</externalId>
     <label>Outstanding Payments</label>
     <summarizedField>Invoice__c.Amount__c</summarizedField>
+    <summaryFilterItems>
+        <field>Invoice__c.status__c</field>
+        <operation>equals</operation>
+        <value>unpaid</value>
+    </summaryFilterItems>
     <summaryForeignKey>Invoice__c.Account__c</summaryForeignKey>
     <summaryOperation>sum</summaryOperation>
     <trackHistory>false</trackHistory>
