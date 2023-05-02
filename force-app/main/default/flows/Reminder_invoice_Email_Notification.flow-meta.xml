@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
-        <name>Reminder_Invoice_Email_Notification</name>
-        <label>Reminder Invoice Email Notification</label>
+        <name>Reminder_Invoice_Email_Notifications</name>
+        <label>Reminder Invoice Email Notifications</label>
         <locationX>242</locationX>
         <locationY>408</locationY>
         <actionName>emailSimple</actionName>
         <actionType>emailSimple</actionType>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>emailBody</name>
             <value>
@@ -29,34 +28,33 @@
         <inputParameters>
             <name>emailSubject</name>
             <value>
-                <stringValue>Reminder: Invoice Due Date Approaching</stringValue>
+                <stringValue>Reminder Invoice Due Date Approaching</stringValue>
             </value>
         </inputParameters>
     </actionCalls>
     <apiVersion>57.0</apiVersion>
     <decisions>
-        <name>Due_Date_Greater_Than_10_days_from_today</name>
-        <label>Due Date Greater Than  10 days from today</label>
+        <name>Check_Status</name>
+        <label>Check Status</label>
         <locationX>374</locationX>
         <locationY>288</locationY>
-        <defaultConnectorLabel>No</defaultConnectorLabel>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
-            <name>Yes</name>
+            <name>Status_is_pending</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.Due_Date__c</leftValueReference>
-                <operator>EqualTo</operator>
+                <leftValueReference>$Record.status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
                 <rightValue>
-                    <elementReference>checkdate</elementReference>
+                    <stringValue>paid</stringValue>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Reminder_Invoice_Email_Notification</targetReference>
+                <targetReference>Reminder_Invoice_Email_Notifications</targetReference>
             </connector>
-            <label>Yes</label>
+            <label>Status is pending</label>
         </rules>
     </decisions>
-    <environments>Default</environments>
     <formulas>
         <name>checkdate</name>
         <dataType>Date</dataType>
@@ -107,17 +105,6 @@
         </filters>
         <object>Invoice__c</object>
         <recordTriggerType>Create</recordTriggerType>
-        <scheduledPaths>
-            <name>X10_Day_Before_Invoice_Due_Date</name>
-            <connector>
-                <targetReference>Due_Date_Greater_Than_10_days_from_today</targetReference>
-            </connector>
-            <label>10 Day Before Invoice Due Date</label>
-            <offsetNumber>-10</offsetNumber>
-            <offsetUnit>Days</offsetUnit>
-            <recordField>Due_Date__c</recordField>
-            <timeSource>RecordField</timeSource>
-        </scheduledPaths>
         <triggerType>RecordAfterSave</triggerType>
     </start>
     <status>Active</status>

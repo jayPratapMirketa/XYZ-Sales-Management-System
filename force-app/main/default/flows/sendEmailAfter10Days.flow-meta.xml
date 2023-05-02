@@ -10,7 +10,6 @@
         <connector>
             <targetReference>ChangeStatus</targetReference>
         </connector>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>emailBody</name>
             <value>
@@ -66,7 +65,6 @@
             <label>Yes</label>
         </rules>
     </decisions>
-    <environments>Default</environments>
     <formulas>
         <name>Tendaysafterduedate</name>
         <dataType>Date</dataType>
@@ -108,7 +106,7 @@
             <field>status__c</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>paid</stringValue>
+                <stringValue>pending</stringValue>
             </value>
         </filters>
         <inputAssignments>
@@ -133,17 +131,6 @@
         </filters>
         <object>Invoice__c</object>
         <recordTriggerType>Create</recordTriggerType>
-        <scheduledPaths>
-            <name>X10_days_after_invoice_due_date</name>
-            <connector>
-                <targetReference>checkDueDate</targetReference>
-            </connector>
-            <label>10 days after invoice due date</label>
-            <offsetNumber>10</offsetNumber>
-            <offsetUnit>Days</offsetUnit>
-            <recordField>Due_Date__c</recordField>
-            <timeSource>RecordField</timeSource>
-        </scheduledPaths>
         <triggerType>RecordAfterSave</triggerType>
     </start>
     <status>Active</status>
